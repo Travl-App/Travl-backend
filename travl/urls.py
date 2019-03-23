@@ -17,13 +17,12 @@ router = [
 
 
 urlpatterns = [
-    # path('places/', include('mainapp.urls.place', namespace='place')),
-    # path('users/', include('mainapp.urls.travler', namespace='travler')),
-    # api
-    path('api/users/<slug:user>/', include(router)),
-
     # admin
     path('kmedtv/', admin.site.urls),
+    # api
+    path('api/users/<slug:user>/', include(router)),
+    # web
+    path('', include('webapp.urls', namespace='web')),
 ]
 
 if settings.IS_MEDIA_LOCAL:

@@ -1,0 +1,105 @@
+html {
+  min-height: 100%;
+  position: relative; }
+
+body {
+  background-color: seashell;
+  margin: 0;
+  padding: 0;
+  font-size: 12px; }
+
+.h2 {
+  font-size: 1.5em; }
+
+.body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; }
+
+.header__navigation {
+  list-style: none;
+  display: flex; }
+
+.header__navigation li {
+  padding-right: 15px; }
+
+.main_page {
+  flex: 100%; }
+
+.footer p {
+  font-size: 10px;
+  color: black; }
+
+.articles {
+  flex: 100%; }
+
+.article {
+  display: flex;
+  flex-wrap: wrap; }
+
+.article__places {
+  display: flex;
+  flex-wrap: wrap; }
+
+.article__place_card {
+  width: 33%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  border: 1px solid darkgrey;
+  background-color: snow;
+  color: black; }
+  .article__place_card:hover {
+    background-color: seashell;
+    text-decoration: none;
+    color: black; }
+  .article__place_card:active {
+    text-decoration: none;
+    color: black; }
+  .article__place_card:visited {
+    text-decoration: none;
+    color: black; }
+
+.article__place_h2 {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 1.5em; }
+
+.article__place_h2::after {
+  content: "";
+  display: inline-block;
+  background-image: url(http://argumenti.ru/images/arhnews/542210.jpg);
+  background-position: center;
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px; }
+
+.article__author {
+  display: flex;
+  height: 30px; }
+
+.article__author p {
+  padding-left: 15px; }
+
+.article__author_logo {
+  height: 30px;
+  border-radius: 10px;
+  padding-right: 30px; }
+
+.article__place_image {
+  width: 100%; }
+
+.article__place_description {
+  height: 80px;
+  overflow: hidden; }
+  .article__place_description::after {
+    content: '...';
+    margin-bottom: 30px; }
+
+@media screen and (max-width: 450px) {
+  .article__place_card {
+    width: 50%; } }
+
+/*# sourceMappingURL=style.bundle.css.map*/
