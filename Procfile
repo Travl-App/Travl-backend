@@ -1,0 +1,1 @@
+web: gunicorn travl.wsgi --log-file -

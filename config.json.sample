@@ -1,0 +1,19 @@
+{
+    "ALLOWED_HOSTS": [],
+    "DATABASES": {
+        "default": {
+            "CONN_MAX_AGE": 500,
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": "ip",
+            "NAME": "db_name",
+            "PASSWORD": "password",
+            "PORT": "5432",
+            "USER": "username"
+        }
+    },
+    "DEBUG": false,
+    "IS_MEDIA_LOCAL": true,
+    "IS_STATIC_ROOT": false,
+    "SECRET_KEY": "very_secret_key",
+    "MAPBOX_TOKEN": "very_secret_token"
+}
