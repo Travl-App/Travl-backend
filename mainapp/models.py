@@ -132,6 +132,7 @@ class Article(models.Model):
         if self.image_cover:
             result['image_cover'] = self.image_cover.url
         for _ in self.placearticle_set.all():
+            # TODO: move place_article serialization in models
             temp_place = {
                 'id': _.place.id,
                 'link': reverse_lazy('api_place:detail', kwargs={'pk': _.place.id, 'user': username})
@@ -140,6 +141,8 @@ class Article(models.Model):
                 temp_place['image'] = _.image.image.url
             if _.description:
                 temp_place['description'] = _.description
+            if _.order:
+                temp_place['order'] = _.order
             result['article_places'].append(temp_place)
         # temp_categories = []
         # for _ in self.articlecategory_set.all():
