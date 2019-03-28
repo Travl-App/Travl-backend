@@ -19,7 +19,7 @@ class RestCategoryListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(RestCategoryListView, self).get_context_data(**kwargs)
 
-        username = self.kwargs.get('user')
+        username = self.request.GET.get('user', 'travl')
         try:
             assert Travler.objects.get(username=username)
         except ObjectDoesNotExist:
@@ -48,7 +48,7 @@ class RestCategoryDetailView(DetailView):
     query_pk_or_slug = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        username = self.kwargs.get('user')
+        username = self.request.GET.get('user', 'travl')
         uin = self.kwargs.get('pk')
         try:
             user = Travler.objects.get(username=username)

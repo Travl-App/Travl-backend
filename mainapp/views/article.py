@@ -21,7 +21,8 @@ class JsonArticleListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(JsonArticleListView, self).get_context_data(**kwargs)
 
-        username = self.kwargs.get('user')
+        username = self.request.GET.get('user', 'travl')
+        travlzine = self.request.GET.get('travlzine', False)
         try:
             assert Travler.objects.get(username=username)
         except ObjectDoesNotExist:
@@ -36,8 +37,12 @@ class JsonArticleListView(ListView):
             'user': username,
         }
         articles = context.get('article_list')
-        print(articles)
-        data['articles'] = [article.serialize(username, detailed=False) for article in articles.all()]
+        if travlzine == 'true':
+            data['articles'] = [
+                article.serialize(username, detailed=True) for article in articles.filter(is_chosen=True)
+            ]
+        else:
+            data['articles'] = [article.serialize(username, detailed=False) for article in articles.all()]
 
         return data
 
@@ -55,7 +60,7 @@ class JsonArticleDetailView(DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         # context = super(RestPlaceDetailView, self).get_context_data(**kwargs)
 
-        username = self.kwargs.get('user')
+        username = self.request.GET.get('user', 'travl')
         uin = self.kwargs.get('pk')
         try:
             assert Travler.objects.get(username=username)

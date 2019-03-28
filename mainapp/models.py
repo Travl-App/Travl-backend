@@ -28,7 +28,7 @@ class Travler(AbstractUser):
         result = {
             'username': self.username,
             'modified': self.modified,
-            'link': reverse_lazy('api_user:detail', kwargs={'username': self.username, 'user': username})
+            'link': reverse_lazy('api_user:detail', kwargs={'username': self.username})
         }
         if not detailed:
             return result
@@ -56,7 +56,7 @@ class City(models.Model):
             'id': self.id,
             # 'title': self.title,
             'modified': self.modified,
-            'link': reverse_lazy('api_city:detail', kwargs={'pk': self.id, 'user': username})
+            'link': reverse_lazy('api_city:detail', kwargs={'pk': self.id})
         }
         if not detailed:
             return result
@@ -65,9 +65,9 @@ class City(models.Model):
         result['country'] = self.country
 
         places = list(self.place_set.all())
-        result['places'] = [place.serialize(username, detailed=False) for place in places]
+        result['places'] = [place.serialize(username, detailed=True) for place in places]
         result['articles'] = [
-              article.article.serialize(username, detailed=False)
+              article.article.serialize(username, detailed=True)
               for place in places
               for article in place.placearticle_set.all()
         ]
@@ -88,7 +88,7 @@ class Category(models.Model):
             'id': self.id,
             'name': self.name,
             'modified': self.modified,
-            'link': reverse_lazy('api_category:detail', kwargs={'pk': self.id, 'user': username})
+            'link': reverse_lazy('api_category:detail', kwargs={'pk': self.id})
         }
         if not detailed:
             return result
@@ -118,7 +118,7 @@ class Article(models.Model):
             'id': self.id,
             'title': self.title,
             'modified': self.modified.strftime('%Y-%m-%d %T %Z'),
-            'link': reverse_lazy('api_article:detail', kwargs={'pk': self.id, 'user': username})
+            'link': reverse_lazy('api_article:detail', kwargs={'pk': self.id})
         }
         if not detailed:
             return result
@@ -132,13 +132,16 @@ class Article(models.Model):
         if self.image_cover:
             result['image_cover'] = self.image_cover.url
         for _ in self.placearticle_set.all():
-            # TODO: move place_article serialization in models
+            # TODO: move place_article serialization in PlaceArticle model
             temp_place = {
                 'id': _.place.id,
-                'link': reverse_lazy('api_place:detail', kwargs={'pk': _.place.id, 'user': username})
+                'link': reverse_lazy('api_place:detail', kwargs={'pk': _.place.id})
             }
             if _.image:
-                temp_place['image'] = _.image.image.url
+                temp_place['selected_image'] = _.image.image.url
+            if _.image:
+                if _.place.placeimage_set.exclude(pk=_.image.pk):
+                    temp_place['other_images'] = [image.image.url for image in _.place.placeimage_set.exclude(pk=_.image.pk)]
             if _.description:
                 temp_place['description'] = _.description
             if _.order:
@@ -183,7 +186,7 @@ class Place(models.Model):
         result = {
             'id': self.id,
             'modified': self.modified,
-            'link': reverse_lazy('api_place:detail', kwargs={'pk': self.id, 'user': username}),
+            'link': reverse_lazy('api_place:detail', kwargs={'pk': self.id}),
         }
         if not detailed:
             return result
@@ -230,8 +233,6 @@ class PlaceImage(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        json_title = self.place.info
-
         return "Картинка: %s - %s" % (self.place, self.image.name)
 
 

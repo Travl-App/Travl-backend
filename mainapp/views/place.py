@@ -14,7 +14,7 @@ class RestPlaceListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(RestPlaceListView, self).get_context_data(**kwargs)
 
-        username = self.kwargs.get('user')
+        username = self.request.GET.get('user', 'travl')
         try:
             user = Travler.objects.get(username=username)
         except ObjectDoesNotExist:
@@ -47,7 +47,7 @@ class RestPlaceDetailView(DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         # context = super(RestPlaceDetailView, self).get_context_data(**kwargs)
 
-        username = self.kwargs.get('user')
+        username = self.request.GET.get('user', 'travl')
         uin = self.kwargs.get('pk')
         try:
             user = Travler.objects.get(username=username)

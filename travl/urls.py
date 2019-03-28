@@ -20,7 +20,8 @@ urlpatterns = [
     # admin
     path('kmedtv/', admin.site.urls),
     # api
-    path('api/users/<slug:user>/', include(router)),
+    # path('api/users/<slug:user>/', include(router)),
+    path('api/', include(router)),
     # web
     path('', include('webapp.urls', namespace='web')),
 ]
