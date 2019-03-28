@@ -28,7 +28,7 @@ class JsonArticleListView(ListView):
         except ObjectDoesNotExist:
             return {
                 'status': 404,
-                'description': 'user does not exist',
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
 
@@ -43,7 +43,7 @@ class JsonArticleListView(ListView):
             ]
         else:
             data['articles'] = [article.serialize(username, detailed=False) for article in articles.all()]
-
+        data['count'] = len(data['articles'])
         return data
 
     def render_to_response(self, context, **response_kwargs):
@@ -67,7 +67,7 @@ class JsonArticleDetailView(DetailView):
         except ObjectDoesNotExist:
             return {
                 'status': 404,
-                'description': 'user does not exist',
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
         data = {

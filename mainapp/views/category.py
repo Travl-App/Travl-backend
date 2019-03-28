@@ -25,7 +25,7 @@ class RestCategoryListView(ListView):
         except ObjectDoesNotExist:
             return {
                 'status': 404,
-                'description': 'user does not exist',
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
 
@@ -36,7 +36,7 @@ class RestCategoryListView(ListView):
         categories = context.get('category_list')
         print(categories)
         data['categories'] = [category.serialize(username, detailed=False) for category in categories.all()]
-
+        data['count'] = len(data['categories'])
         return data
 
     def render_to_response(self, context, **response_kwargs):
@@ -54,8 +54,8 @@ class RestCategoryDetailView(DetailView):
             user = Travler.objects.get(username=username)
         except ObjectDoesNotExist:
             return {
-                'status': 'error',
-                'description': 'user does not exist',
+                'status': 404,
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
 

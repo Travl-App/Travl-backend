@@ -19,7 +19,7 @@ class QueryListView(ListView):
         except ObjectDoesNotExist:
             return {
                 'status': 404,
-                'description': 'user does not exist',
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
 

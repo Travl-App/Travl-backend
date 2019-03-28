@@ -26,7 +26,7 @@ class RestCityListView(ListView):
         except ObjectDoesNotExist:
             return {
                 'status': 404,
-                'description': 'user does not exist',
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
 
@@ -37,7 +37,7 @@ class RestCityListView(ListView):
         cities = context.get('city_list')
         print(cities)
         data['cities'] = [city.serialize(username, detailed=False) for city in cities.all()]
-
+        data['count'] = len(data['cities'])
         return data
 
     def render_to_response(self, context, **response_kwargs):
@@ -57,8 +57,8 @@ class RestCityDetailView(DetailView):
             user = Travler.objects.get(username=username)
         except ObjectDoesNotExist:
             return {
-                'status': 'error',
-                'description': 'user does not exist',
+                'status': 404,
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
 

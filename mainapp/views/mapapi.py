@@ -18,8 +18,8 @@ class JsonMapListView(ListView):
             user = Travler.objects.get(username=username)
         except ObjectDoesNotExist:
             return {
-                'status': 403,
-                'description': 'user does not exist',
+                'status': 404,
+                'description': 'User does not exist',
                 'context': {'username': username},
             }
         detailed_places = self.request.GET.get('detailed', '0')
