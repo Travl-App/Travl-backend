@@ -66,11 +66,14 @@ class City(models.Model):
 
         places = list(self.place_set.all())
         result['places'] = [place.serialize(username, detailed=True) for place in places]
-        result['articles'] = [
-              article.article.serialize(username, detailed=True)
-              for place in places
-              for article in place.placearticle_set.all()
-        ]
+        all_articles = {
+            article.article.pk:
+                article.article.serialize(username, detailed=True)
+                for place in places
+                for article in place.placearticle_set.all()
+        }
+        result['articles'] = [all_articles[key] for key in all_articles.keys()]
+
 
         return result
 
