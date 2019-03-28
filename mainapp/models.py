@@ -201,16 +201,15 @@ class Place(models.Model):
         # It was with get but developers asked to make fields even they are empty
         # if json_data.get('description'):
         #     data['description'] = json_data.get('description')
-        try:
-            result['description'] = json_data['description']
-        except KeyError:
-            result['description'] = None
-        if json_data.get('address'):
-            result['address'] = json_data.get('address')
-        if json_data.get('route'):
-            result['route'] = json_data.get('route')
-        if json_data.get('traffic'):
-            result['traffic'] = json_data.get('traffic')
+        # try:
+        #     result['description'] = json_data['description']
+        # except KeyError:
+        #     result['description'] = None
+
+        json_keys = ['title', 'subtitle', 'description', 'address', 'route', 'traffic', ]
+        for key in json_keys:
+            if json_data.get(key):
+                result[key] = json_data.get(key)
         # images
         # 'images': None,  # ["<str:imageUrl>", "<str:imageUrl>", ...]*,
         images = [_.image.url for _ in self.placeimage_set.all()]
