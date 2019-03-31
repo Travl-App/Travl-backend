@@ -20,6 +20,7 @@ class RestCityListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(RestCityListView, self).get_context_data(**kwargs)
 
+
         username = self.request.GET.get('user', 'travl')
         try:
             assert Travler.objects.get(username=username)
@@ -30,13 +31,16 @@ class RestCityListView(ListView):
                 'context': {'username': username},
             }
 
+        detailed_cities = self.request.GET.get('detailed', '0')
+        detailed_cities = int(detailed_cities) if detailed_cities.isnumeric() else 0
+
         data = {
             'status': 200,
             'user': username,
         }
         cities = context.get('city_list')
         print(cities)
-        data['cities'] = [city.serialize(username, detailed=False) for city in cities.all()]
+        data['cities'] = [city.serialize(username, detailed=detailed_cities) for city in cities.all()]
         data['count'] = len(data['cities'])
         return data
 
