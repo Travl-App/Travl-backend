@@ -55,6 +55,8 @@ class City(models.Model):
         result = {
             'id': self.id,
             'title': ', '.join([self.locality, self.region]),
+            'region': self.region,
+            'place': self.locality,
             'modified': self.modified,
             'link': reverse_lazy('api_city:detail', kwargs={'pk': self.id})
         }
