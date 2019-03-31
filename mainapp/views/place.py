@@ -28,6 +28,32 @@ class RestPlaceListView(ListView):
             'status': 200,
             'user': user.username
         }
+
+        position = self.request.GET.get('position', '')
+        if position:
+            coords = position.split(',')
+            if len(coords) == 3:
+                latitude, longitude, altitude = coords
+            elif len(coords) == 2:
+                latitude, longitude = coords
+            else:
+                return {
+                    'status': 500,
+                    'description': 'Not enough data: position required',
+                    'context': {'position': position}
+                }
+
+            place = Place.objects.select_related('city').filter(latitude=latitude).filter(longitude=longitude).first()
+            if place:
+                data['place'] = place.serialize(username, detailed=True)
+                return data
+            else:
+                return {
+                    'status': 404,
+                    'description': 'Could not find place with this coordinates',
+                    'context': {'username': username, 'latitude': latitude, 'longitude': longitude},
+                }
+
         places = context.get('place_list')
         data['places'] = [_.serialize(username, detailed=False) for _ in places]
         data['count'] = len(data['places'])

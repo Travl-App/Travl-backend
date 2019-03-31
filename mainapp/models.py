@@ -55,16 +55,17 @@ class City(models.Model):
         result = {
             'id': self.id,
             'title': ', '.join([self.locality, self.region]),
+            'country': self.country,
             'region': self.region,
-            'place': self.locality,
+            'locality': self.locality,
             'modified': self.modified,
             'link': reverse_lazy('api_city:detail', kwargs={'pk': self.id})
         }
         if not detailed:
             return result
-        result['place'] = self.locality
-        result['region'] = self.region
-        result['country'] = self.country
+        # result['place'] = self.locality
+        # result['region'] = self.region
+        # result['country'] = self.country
 
         places = list(self.place_set.all())
         result['places'] = [place.serialize(username, detailed=True) for place in places]
@@ -75,7 +76,6 @@ class City(models.Model):
                 for article in place.placearticle_set.all()
         }
         result['articles'] = [all_articles[key] for key in all_articles.keys()]
-
 
         return result
 
