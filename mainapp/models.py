@@ -54,7 +54,7 @@ class City(models.Model):
     def serialize(self, username, detailed=True):
         result = {
             'id': self.id,
-            # 'title': self.title,
+            'title': ', '.join([self.locality, self.region]),
             'modified': self.modified,
             'link': reverse_lazy('api_city:detail', kwargs={'pk': self.id})
         }

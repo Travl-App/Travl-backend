@@ -31,8 +31,8 @@ class RestCityListView(ListView):
                 'context': {'username': username},
             }
 
-        detailed_cities = self.request.GET.get('detailed', '0')
-        detailed_cities = int(detailed_cities) if detailed_cities.isnumeric() else 0
+        # detailed_cities = self.request.GET.get('detailed', '0')
+        # detailed_cities = int(detailed_cities) if detailed_cities.isnumeric() else 0
 
         data = {
             'status': 200,
@@ -40,7 +40,7 @@ class RestCityListView(ListView):
         }
         cities = context.get('city_list')
         print(cities)
-        data['cities'] = [city.serialize(username, detailed=detailed_cities) for city in cities.all()]
+        data['cities'] = [city.serialize(username, detailed=False) for city in cities.all()]
         data['count'] = len(data['cities'])
         return data
 
