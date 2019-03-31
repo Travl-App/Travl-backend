@@ -6,14 +6,17 @@ from django.conf import settings
 
 
 def get_mapbox_data(latitude, longitude):
-    url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/%(lon)s,%(lat)s.json?access_token=%(token)s&types=%(typ)s'
-    url = url % {
-        'token': settings.MAPBOX_TOKEN,
-        'lon': longitude,
-        'lat': latitude,
-        'typ': 'place,region,country'
+    url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/%(lon)s,%(lat)s.json?' % {
+        'lon': float(longitude),
+        'lat': float(latitude),
     }
-    r = requests_get(url)
+    params = {
+        'access_token': settings.MAPBOX_TOKEN,
+        'types': 'place,region,country',
+        'language': 'ru',
+        'languageMode': 'strict',
+    }
+    r = requests_get(url, params)
     return r.json()
 
 
