@@ -13,7 +13,7 @@ def get_mapbox_data(latitude, longitude):
     params = {
         'access_token': settings.MAPBOX_TOKEN,
         'types': 'place,region,country',
-        'language': 'ru',
+        'language': 'ru,en',
         'languageMode': 'strict',
     }
     r = requests_get(url, params)
