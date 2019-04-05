@@ -1,4 +1,3 @@
-/* v1 */
 html {
   min-height: 100%;
   position: relative; }
@@ -43,11 +42,16 @@ main {
   flex-direction: column; }
 
 .article {
-  display: flex;
   flex-wrap: wrap; }
 
 .article__places {
   margin: 0 auto; }
+
+.article__card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex: 50%; }
 
 .article__place_card {
   max-width: 700px;
@@ -99,8 +103,12 @@ main {
   border-radius: 10px;
   padding-right: 30px; }
 
+.article__image_cover {
+  max-width: 700px; }
+
 .article__place_image {
-  width: 100%; }
+  max-width: 100%;
+  max-height: 367px; }
 
 .control-dots {
   padding: 0; }
