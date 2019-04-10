@@ -8,3 +8,8 @@ def index_view(request):
 def article_view(request, key):
     assert key
     return render(request, 'webapp/index.html', context={})
+
+
+def place_view(request, key):
+    assert key
+    return render(request, 'webapp/index.html', context={})
