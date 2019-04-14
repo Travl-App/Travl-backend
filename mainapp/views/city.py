@@ -39,7 +39,11 @@ class RestCityListView(ListView):
         }
         cities = context.get('city_list')
         print(cities)
-        data['cities'] = [city.serialize(username, detailed=False) for city in cities.all()]
+        data['cities'] = [
+            city.serialize(
+                username, detailed=False
+            ) for city in cities.all()
+        ]
         data['count'] = len(data['cities'])
         return data
 
@@ -55,7 +59,6 @@ class RestCityDetailView(DetailView):
         # context = super(RestPlaceDetailView, self).get_context_data(**kwargs)
 
         username = self.request.GET.get('user', 'travl')
-        uin = self.kwargs.get('pk')
         try:
             user = Travler.objects.get(username=username)
         except ObjectDoesNotExist:
@@ -64,13 +67,19 @@ class RestCityDetailView(DetailView):
                 'description': 'User does not exist',
                 'context': {'username': username},
             }
+        uin = self.kwargs.get('pk')
+        page_place = int(self.request.GET.get('page_place', '1'))
+        page_article = int(self.request.GET.get('page_article', '1'))
 
         data = {
             'status': 200,
             'user': user.username
         }
         city = City.objects.get(pk=uin)
-        data['city'] = city.serialize(username, detailed=True)
+        data['city'] = city.serialize(
+            username, detailed=True,
+            page_place=page_place, page_article=page_article
+        )
 
         return data
 
