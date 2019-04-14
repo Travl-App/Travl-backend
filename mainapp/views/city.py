@@ -68,8 +68,7 @@ class RestCityDetailView(DetailView):
                 'context': {'username': username},
             }
         uin = self.kwargs.get('pk')
-        page_place = int(self.request.GET.get('page_place', '1'))
-        page_article = int(self.request.GET.get('page_article', '1'))
+
 
         data = {
             'status': 200,
@@ -78,7 +77,7 @@ class RestCityDetailView(DetailView):
         city = City.objects.get(pk=uin)
         data['city'] = city.serialize(
             username, detailed=True,
-            page_place=page_place, page_article=page_article
+            **self.request.GET
         )
 
         return data

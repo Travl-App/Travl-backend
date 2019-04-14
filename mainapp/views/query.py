@@ -56,7 +56,7 @@ class QueryListView(ListView):
         data = {
             'status': 200,
             'user': username,
-            'city': city.serialize(username, detailed=True)
+            'city': city.serialize(username, detailed=True, **self.request.GET)
         }
 
         return data

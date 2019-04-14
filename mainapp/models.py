@@ -6,83 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.fields import JSONField
 from django.urls import reverse_lazy
 
-
-class Paginator:
-    def __init__(self, current_page, model=None, items=None, query=None, items_per_page=10):
-        self.current_page = current_page
-        self.items_per_page = items_per_page
-        self.query = query
-        self.item_list = items
-        self.model = model
-
-    @property
-    def count(self):
-        if self.query:
-            return self.query.count()
-        elif self.item_list:
-            return len(self.item_list)
-        elif self.model:
-            return self.model.objects.count()
-        else:
-            return 0
-
-    @property
-    def pages(self):
-        return (self.count // self.items_per_page) + 1
-
-# places_count = self.place_set.count()
-# place_page_num = 10
-# place_pages = places_count // place_page_num
-# places_next = None
-# places_prev = None
-
-# if places_count > place_page_num:
-#     place_amount = page_place * place_page_num
-#     print(place_amount-10, place_amount)
-#     places = list(self.place_set.all().order_by('id')[place_amount - 10:place_amount])
-#     if page_place == 1 and place_pages + 1:
-#         places_next = 2
-#     elif page_place == place_pages + 1:
-#         places_prev = place_pages
-#     else:
-#         places_next = page_place + 1
-#         places_prev = page_place - 1
-# else:
-#     places = list(self.place_set.all())
-# result['places'] = {'count': places_count, }
-
-    def has_next(self):
-        if self.pages > 1:
-            if self.current_page < self.pages:
-                return True
-        return False
-
-    @property
-    def next(self):
-        if self.has_next() and 0 < self.current_page < self.pages + 1:
-            return self.current_page + 1
-        return None
-
-    def has_prev(self):
-        if self.pages > 1:
-            if self.current_page > 1:
-                return True
-        return False
-
-    @property
-    def prev(self):
-        if self.has_prev() and 0 < self.current_page < self.pages + 1:
-            return self.current_page - 1
-
-    @property
-    def page(self):
-        index = self.current_page * self.items_per_page
-        if self.query:
-            return self.query.order_by('id')[index - self.items_per_page:index]
-        if self.item_list:
-            return self.item_list[index-self.items_per_page:index]
-        if self.model:
-            return self.model.objects.order_by('id')[index - self.items_per_page:index]
+from mainapp.scripts.paginator import Paginator
 
 
 class Travler(AbstractUser):
@@ -129,7 +53,14 @@ class City(models.Model):
     def __str__(self):
         return "%s (%s)" % (self.locality, self.region, )
 
-    def serialize(self, username, detailed=True, page_place=1, page_article=1):
+    def serialize(self, username, detailed=True, **kwargs):
+
+        def string_names(): pass
+        string_names.place_page_num = 'place_page_num'
+        string_names.places_per_page = 'places_per_page'
+        string_names.article_page_num = 'article_page_num'
+        string_names.articles_per_page = 'articles_per_page'
+
         result = {
             'id': self.id,
             'title': ', '.join([self.locality, self.region]),
@@ -141,63 +72,65 @@ class City(models.Model):
         }
         if not detailed:
             return result
-        # result['place'] = self.locality
-        # result['region'] = self.region
-        # result['country'] = self.country
+        print('KWARGS:', kwargs)
 
-        print('place:', page_place, 'article:', page_article)
+        place_page_num = int(kwargs.get(string_names.place_page_num, ['1'])[0])
+        places_per_page = int(kwargs.get(string_names.places_per_page, ['10'])[0])
+        article_page_num = int(kwargs.get(string_names.article_page_num, ['1'])[0])
+        articles_per_page = int(kwargs.get(string_names.articles_per_page, ['10'])[0])
 
-        place_paginator = Paginator(current_page=page_place, query=self.place_set, items_per_page=10)
+        print(
+            'place:', place_page_num, 'article:', article_page_num
+        )
+
+        place_paginator = Paginator(current_page=place_page_num, query=self.place_set, items_per_page=places_per_page)
         result['places'] = {'count': place_paginator.count, }
         result['places']['data'] = [place.serialize(username, detailed=True) for place in place_paginator.page]
+
+        city_url = '%(url)s?%(place_page_num)s=%(place)s&%(article_page_num)s=%(article)s'
+        url_data = {
+            'url': reverse_lazy('api_city:detail', kwargs={'pk': self.id}),
+            'place_page_num': string_names.place_page_num,
+            'article_page_num': string_names.article_page_num
+        }
         if place_paginator.has_next():
-            result['places']['next'] = '%(url)s?page_place=%(place)s&page_article=%(article)s' % {
-                'url': reverse_lazy('api_city:detail', kwargs={'pk': self.id}),
+            url_data.update({
                 'place': place_paginator.next,
-                'article': page_article
-            }
+                'article': article_page_num
+            })
+            result['places']['next'] = city_url % url_data
         if place_paginator.has_prev():
-            result['places']['prev'] = '%(url)s?page_place=%(place)s&page_article=%(article)s' % {
-                'url': reverse_lazy('api_city:detail', kwargs={'pk': self.id}),
+            url_data.update({
                 'place': place_paginator.prev,
-                'article': page_article
-            }
-        # places_count = self.place_set.count()
-        # place_page_num = 10
-        # place_pages = places_count // place_page_num
-        # places_next = None
-        # places_prev = None
-        # if places_count > place_page_num:
-        #     place_amount = page_place * place_page_num
-        #     print(place_amount-10, place_amount)
-        #     places = list(self.place_set.all().order_by('id')[place_amount - 10:place_amount])
-        #     if page_place == 1 and place_pages + 1:
-        #         places_next = 2
-        #     elif page_place == place_pages + 1:
-        #         places_prev = place_pages
-        #     else:
-        #         places_next = page_place + 1
-        #         places_prev = page_place - 1
-        # else:
-        #     places = list(self.place_set.all())
-        # result['places'] = {'count': places_count, }
-        # result['places']['data'] = [place.serialize(username, detailed=True) for place in places]
-        # if places_next:
-        #     result['places']['next'] = f'' \
-        #         f'{reverse_lazy("api_city:detail", kwargs={"pk": self.id})}' \
-        #         f'?page_place={places_next}&page_article={page_article}'
-        # if places_prev:
-        #     result['places']['prev'] = f'' \
-        #         f'{reverse_lazy("api_city:detail", kwargs={"pk": self.id})}' \
-        #         f'?page_place={places_prev}&page_article={page_article}'
+                'article': article_page_num
+            })
+            result['places']['prev'] = city_url % url_data
+
         all_articles = {
             article.article.pk:
                 article.article.serialize(username, detailed=True)
                 for place in list(place_paginator.query.all())
                 for article in place.placearticle_set.all()
         }
-        print(all_articles, type(all_articles))
-        result['articles'] = [all_articles[key] for key in all_articles.keys()]
+        article_paginator = Paginator(
+            current_page=article_page_num, items_per_page=articles_per_page,
+            items=[all_articles[key] for key in all_articles.keys()]
+        )
+
+        result['articles'] = {'count': article_paginator.count, }
+        result['articles']['data'] = article_paginator.page
+        if article_paginator.has_next():
+            url_data.update({
+                'place': place_page_num,
+                'article': article_paginator.next
+            })
+            result['articles']['next'] = city_url % url_data
+        if article_paginator.has_prev():
+            url_data.update({
+                'place': place_page_num,
+                'article': article_paginator.prev
+            })
+            result['articles']['prev'] = city_url % url_data
 
         return result
 
