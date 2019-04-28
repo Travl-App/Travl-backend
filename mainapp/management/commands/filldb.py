@@ -14,7 +14,7 @@ from mainapp.models import (
     Article, ArticleCategory, Category,
     Place, PlaceImage, PlaceCategory, PlaceArticle
 )
-from mainapp.scripts.geocode import get_mapbox_data, write_mapbox_data, read_mapbox_data
+from mainapp.scripts.geocode import Coords2City
 
 
 with open(path.join(settings.BASE_DIR, 'raw_data.json'), 'r') as fp:
@@ -77,11 +77,11 @@ class CreateObjects:
         limit = len(places)
         print('There are %s places without city information' % limit)
         for place in places:
-            data = get_mapbox_data(latitude=place.latitude, longitude=place.longitude)
-            write_mapbox_data(data=data)
-            point, region, country = read_mapbox_data(data=data)
+            data = Coords2City.get_mapbox_data(latitude=place.latitude, longitude=place.longitude)
+            Coords2City.write_mapbox_data(data=data)
+            point, region, country, center = Coords2City.read_mapbox_data(data=data)
             counter += 1
-            print(counter, place.id, point, region, country)
+            print(counter, place.id, point, region, country, center)
             try:
                 city = City.objects.get(locality=point, region=region, country=country)
             except ObjectDoesNotExist:
@@ -89,6 +89,9 @@ class CreateObjects:
                 city.locality = point
                 city.region = region
                 city.country = country
+                if center:
+                    city.latitude = center[1]
+                    city.longitude = center[0]
                 city.save()
             place.city = city
             place.save()
@@ -208,13 +211,26 @@ class CreateObjects:
 class Command(BaseCommand):
     help = 'Fill database with data'
 
+    def add_arguments(self, parser):
+        parser.add_argument('obj', nargs='?', default='all')
+
     def handle(self, *args, **options):
+        print(options)
+        cmd = options.get('obj', '')
         gen = CreateObjects()
-        gen.places()
-        gen.cities()
-        gen.categories()
-        gen.place_category()
-        gen.articles()
-        gen.place_image()
-        gen.place_article()
-        gen.article_category()
+        if cmd in ['all', 'places']:
+            gen.places()
+        if cmd in ['all', 'cities']:
+            gen.cities()
+        if cmd in ['all', 'categories']:
+            gen.categories()
+        if cmd in ['all', 'place_category']:
+            gen.place_category()
+        if cmd in ['all', 'articles']:
+            gen.articles()
+        if cmd in ['all', 'place_image']:
+            gen.place_image()
+        if cmd in ['all', 'place_article']:
+            gen.place_article()
+        if cmd in ['all', 'article_category']:
+            gen.article_category()

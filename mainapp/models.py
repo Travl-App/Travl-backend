@@ -47,6 +47,9 @@ class City(models.Model):
     locality = models.TextField()
     region = models.TextField()
     country = models.TextField()
+    latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=8, null=True, blank=True)
+    longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=8, null=True, blank=True)
+    altitude = models.IntegerField(verbose_name="Высота", default=0)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -70,6 +73,8 @@ class City(models.Model):
             'modified': self.modified,
             'link': reverse_lazy('api_city:detail', kwargs={'pk': self.id})
         }
+        if self.latitude is not None and self.longitude is not None:
+            result['coordinates'] = [float(self.latitude), float(self.longitude), float(self.altitude)]
         if not detailed:
             return result
         print('KWARGS:', kwargs)

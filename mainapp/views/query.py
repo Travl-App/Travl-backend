@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.generic import ListView
 
 from mainapp.models import City, Travler
-from mainapp.scripts.geocode import get_mapbox_data, write_mapbox_data, read_mapbox_data
+from mainapp.scripts.geocode import Coords2City
 
 
 class QueryListView(ListView):
@@ -38,9 +38,9 @@ class QueryListView(ListView):
 
         cities = context.get('city_list')
 
-        data = get_mapbox_data(latitude=latitude, longitude=longitude)
-        write_mapbox_data(data)
-        point, region, country = read_mapbox_data(data)
+        data = Coords2City.get_mapbox_data(latitude=latitude, longitude=longitude)
+        Coords2City.write_mapbox_data(data)
+        point, region, country = Coords2City.read_mapbox_data(data)
         try:
             city = cities.get(locality=point, region=region, country=country)
         except ObjectDoesNotExist:
