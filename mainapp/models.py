@@ -13,7 +13,7 @@ class Travler(AbstractUser):
     avatar = models.ImageField(verbose_name='Аватар', upload_to='user_avatars', blank=True, null=True)
     username_validator = UnicodeUsernameValidator()
     username = models.SlugField(_('username'),
-                                unique=True, validators=[username_validator],
+                                unique=True, validators=[username_validator], max_length=30,
                                 error_messages={
                                     'unique': _("A user with that username already exists."),
                                 },)
@@ -162,7 +162,7 @@ class Category(models.Model):
 class Article(models.Model):
     travler = models.ForeignKey(Travler, null=True, blank=True, on_delete=models.SET_NULL)
     is_chosen = models.BooleanField(default=False)
-    title = models.TextField()
+    title = models.TextField(max_length=65)
     subtitle = models.TextField()
     image_cover = models.ImageField(verbose_name='Обложка', upload_to='article_cover', blank=True, null=True)
     description = models.TextField()
@@ -219,6 +219,7 @@ class Article(models.Model):
 class Place(models.Model):
     travler = models.ForeignKey(Travler, on_delete=models.CASCADE)
     city = models.ForeignKey(City, null=True, blank=True, on_delete=models.SET_NULL)
+    title = models.TextField(max_length=50)
     info = JSONField()
     latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=8)
     longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=8)
@@ -242,9 +243,10 @@ class Place(models.Model):
             return result
         result['author'] = self.travler.serialize(username, detailed=True)
         result['coordinates'] = [float(self.latitude), float(self.longitude), float(self.altitude)]
+        result['title'] = self.title
 
         json_data = loads(self.info)
-        json_keys = ['title', 'subtitle', 'description', 'address', 'route', 'traffic', ]
+        json_keys = ['subtitle', 'description', 'address', 'route', 'traffic', ]
         for key in json_keys:
             if json_data.get(key):
                 result[key] = json_data.get(key)
