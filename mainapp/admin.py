@@ -9,24 +9,30 @@ from mainapp.models import (
     Article, ArticleCategory,
     Place, PlaceImage, PlaceCategory, PlaceArticle,
     Travler)
+from mainapp.forms.place import PlaceWidgetForm
 
 
 class PlaceCategoryInline(admin.StackedInline):
     model = PlaceCategory
+    extra = 0
 
 
 class PlaceImageInline(admin.StackedInline):
     model = PlaceImage
+    extra = 0
 
 
 class PlaceAdminModel(admin.ModelAdmin):
+    form = PlaceWidgetForm
+
     list_display = [
         'id', 'travler', 'city', 'latitude', 'longitude', 'created', 'modified', 'categories'
     ]
 
     inlines = [PlaceCategoryInline, PlaceImageInline, ]
 
-    def categories(self, obj):
+    @staticmethod
+    def categories(obj):
         cats = ', '.join([cat.category.name for cat in obj.placecategory_set.all()])
         return cats
 

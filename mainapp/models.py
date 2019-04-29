@@ -27,6 +27,8 @@ class Travler(AbstractUser):
         return "User: %s" % self.username
 
     def serialize(self, username, detailed=True):
+        if username:
+            pass
         result = {
             'username': self.username,
             'modified': self.modified,
@@ -207,7 +209,8 @@ class Article(models.Model):
                 temp_place['selected_image'] = _.image.image.url
             if _.image:
                 if _.place.placeimage_set.exclude(pk=_.image.pk):
-                    temp_place['other_images'] = [image.image.url for image in _.place.placeimage_set.exclude(pk=_.image.pk)]
+                    temp_place['other_images'] = [
+                        image.image.url for image in _.place.placeimage_set.exclude(pk=_.image.pk)]
             if _.description:
                 temp_place['description'] = _.description
             if _.order:
@@ -233,7 +236,10 @@ class Place(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        title = loads(self.info).get('title')
+        if isinstance(self.info, dict):
+            title = self.info.get('title')
+        else:
+            title = loads(self.info).get('title')
         if title:
             title = "%s..." % title[:47] if len(title) > 46 else title
         return "М(%s): %s" % (self.pk, title, )

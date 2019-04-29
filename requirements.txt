@@ -6,3 +6,4 @@ gunicorn
 Pillow>5.3
 dj-database-url
 requests
+django-admin-json-editor==0.2.0
