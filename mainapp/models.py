@@ -256,7 +256,10 @@ class Place(models.Model):
         result['coordinates'] = [float(self.latitude), float(self.longitude), float(self.altitude)]
         result['title'] = self.title
 
-        json_data = loads(self.info)
+        if isinstance(self.info, dict):
+            json_data = self.info
+        else:
+            json_data = loads(self.info)
         json_keys = ['subtitle', 'description', 'address', 'route', 'traffic', ]
         for key in json_keys:
             if json_data.get(key):
