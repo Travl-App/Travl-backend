@@ -40,7 +40,7 @@ class QueryListView(ListView):
 
         data = Coords2City.get_mapbox_data(latitude=latitude, longitude=longitude)
         Coords2City.write_mapbox_data(data)
-        point, region, country = Coords2City.read_mapbox_data(data)
+        point, region, country, *other = Coords2City.read_mapbox_data(data)
         try:
             city = cities.get(locality=point, region=region, country=country)
         except ObjectDoesNotExist:
