@@ -212,7 +212,7 @@ class Article(models.Model):
                     temp_place['other_images'] = [
                         image.image.url for image in _.place.placeimage_set.exclude(pk=_.image.pk)]
             if _.description:
-                temp_place['description'] = _.description
+                temp_place['article_text'] = _.description
             if _.order:
                 temp_place['order'] = _.order
             result['article_places'].append(temp_place)
@@ -305,7 +305,7 @@ class PlaceArticle(models.Model):
     article = models.ForeignKey(Article, null=True, blank=True, on_delete=models.SET_NULL)
     image = models.ForeignKey(PlaceImage, null=True, blank=True, on_delete=models.SET_NULL)
     order = models.IntegerField(default=0)
-    description = models.TextField()
+    description = models.TextField(verbose_name='Текст в статье')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
