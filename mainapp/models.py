@@ -203,7 +203,8 @@ class Article(models.Model):
             temp_place = {
                 'id': _.place.id,
                 'link': reverse_lazy('api_place:detail', kwargs={'pk': _.place.id}),
-                'modified': _.place.modified.strftime('%Y-%m-%d %T %Z')
+                'modified': _.place.modified.strftime('%Y-%m-%d %T %Z'),
+                'title': _.place.title,
             }
             if _.image:
                 temp_place['selected_image'] = _.image.image.url
