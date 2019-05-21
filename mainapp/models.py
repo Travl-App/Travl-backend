@@ -237,12 +237,10 @@ class Place(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if isinstance(self.info, dict):
-            title = self.info.get('title')
+        if self.title:
+            title = "%s..." % self.title[:47] if len(self.title) > 46 else self.title
         else:
-            title = loads(self.info).get('title')
-        if title:
-            title = "%s..." % title[:47] if len(title) > 46 else title
+            title = 'No title'
         return "М(%s): %s" % (self.pk, title, )
 
     def serialize(self, username, detailed=True):
