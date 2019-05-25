@@ -33,25 +33,33 @@ class Coords2City:
         features = data.get('features', '')
         point, region, country = 'Не найден', 'Не найден', 'Не найден'
         p_center, r_center, c_center = [], [], []
+        p_bbox, r_bbox, c_bbox = [], [], []
         if len(features):
             for feature in features:
                 if len(feature.get('place_type', '')):
                     if feature['place_type'][0] == 'place':
                         point = feature.get('text')
                         p_center.extend(feature.get('center'))
-                    if feature['place_type'][0] == 'region':
+                        p_bbox.extend(feature.get('bbox'))
+                    elif feature['place_type'][0] == 'region':
                         region = feature.get('text')
                         r_center.extend(feature.get('center'))
-                    if feature['place_type'][0] == 'country':
+                        r_bbox.extend(feature.get('bbox'))
+                    elif feature['place_type'][0] == 'country':
                         country = feature.get('text')
                         c_center.extend(feature.get('center'))
-        if p_center:
-            center = p_center
-        elif r_center:
-            center = r_center
-        else:
-            center = c_center
-        return point, region, country, tuple(center)
+                        c_bbox.extend(feature.get('bbox'))
+        center = None
+        bbox = None
+        for item in [p_center, r_center, c_center]:
+            if item:
+                center = tuple(item)
+                break
+        for item in [p_bbox, r_bbox, c_bbox]:
+            if item:
+                bbox = tuple([item[1], item[0], item[3], item[2]])
+                break
+        return point, region, country, center, bbox
 
 
 class City2Coords:

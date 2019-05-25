@@ -26,7 +26,7 @@ class PlaceAdminModel(admin.ModelAdmin):
     form = PlaceWidgetForm
 
     list_display = [
-        'id', 'travler', 'city', 'latitude', 'longitude', 'created', 'modified', 'categories'
+        'id', 'travler', 'title', 'city', 'latitude', 'longitude', 'created', 'modified', 'categories'
     ]
 
     inlines = [PlaceCategoryInline, PlaceImageInline, ]

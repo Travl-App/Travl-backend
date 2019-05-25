@@ -35,10 +35,11 @@ def walker(my_path='.', extension=None):
 
 
 class CreateObjects:
-    def __init__(self, username='travl'):
+    def __init__(self, gen_images=False, username='travl'):
         self.user = Travler.objects.get(username=username)
-        self.images_dir = path.join(settings.BASE_DIR, 'sources', 'images')
-        self.filenames = walker(self.images_dir)
+        if gen_images:
+            self.images_dir = path.join(settings.BASE_DIR, 'sources', 'images')
+            self.filenames = walker(self.images_dir)
         self.category_names = [
             'Архитектура',
             'Вид',
@@ -56,19 +57,23 @@ class CreateObjects:
     def places(self):
         print("Generate places")
         places = []
+        counter_amended = 0
         for item in raw_places:
-            place = Place()
-            place.latitude = item['latitude']
-            place.longitude = item['longitude']
-            place.altitude = 0
-            place.travler = self.user
-            place.info = dumps({
-                'title': item['title'],
-                'description': item['description']
-            })
-            places.append(place)
+            item['longitude'] = float("{0:.8f}".format(float(item['longitude'])))
+            item['latitude'] = float("{0:.8f}".format(float(item['latitude'])))
+            temp_place = Place.objects.filter(longitude=item['longitude']).filter(latitude=item['latitude'])
+            if temp_place:
+                item['travler'] = temp_place.first().travler
+                temp_place.update(**item)
+                counter_amended += 1
+            else:
+                item['travler'] = self.user
+                places.append(Place(**item))
         Place.objects.bulk_create(places)
-        print("Added %s places, now there are %s places" % (len(places), Place.objects.count()))
+        print(
+            "Added %s places, amended %s places, now there are %s places" % (
+                len(places), counter_amended, Place.objects.count())
+              )
 
     def cities(self):
         assert self
@@ -79,9 +84,9 @@ class CreateObjects:
         for place in places:
             data = Coords2City.get_mapbox_data(latitude=place.latitude, longitude=place.longitude)
             Coords2City.write_mapbox_data(data=data)
-            point, region, country, center = Coords2City.read_mapbox_data(data=data)
+            point, region, country, center, bbox = Coords2City.read_mapbox_data(data=data)
             counter += 1
-            print(counter, place.id, point, region, country, center)
+            print(counter, place.id, point, region, country, center, bbox)
             try:
                 city = City.objects.get(locality=point, region=region, country=country)
             except ObjectDoesNotExist:
@@ -92,6 +97,8 @@ class CreateObjects:
                 if center:
                     city.latitude = center[1]
                     city.longitude = center[0]
+                if bbox:
+                    city.bbox = bbox
                 city.save()
             place.city = city
             place.save()
@@ -217,7 +224,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print(options)
         cmd = options.get('obj', '')
-        gen = CreateObjects()
+        if cmd in ['all', 'articles', 'place_image', ]:
+            gen = CreateObjects(gen_images=True)
+        else:
+            gen = CreateObjects(gen_images=False)
         if cmd in ['all', 'places']:
             gen.places()
         if cmd in ['all', 'cities']:

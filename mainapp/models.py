@@ -49,6 +49,8 @@ class City(models.Model):
     locality = models.TextField()
     region = models.TextField()
     country = models.TextField()
+    bbox = JSONField()
+    radius = models.DecimalField(verbose_name='Радиус', max_digits=10, decimal_places=8, null=True, blank=True)
     latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=8, null=True, blank=True)
     longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=8, null=True, blank=True)
     altitude = models.IntegerField(verbose_name="Высота", default=0)
@@ -77,6 +79,10 @@ class City(models.Model):
         }
         if self.latitude is not None and self.longitude is not None:
             result['coordinates'] = [float(self.latitude), float(self.longitude), float(self.altitude)]
+        if self.radius is not None:
+            result['radius'] = float(self.radius)
+        if self.bbox:
+            result['bbox'] = self.bbox
         if not detailed:
             return result
         print('KWARGS:', kwargs)
@@ -203,7 +209,8 @@ class Article(models.Model):
             temp_place = {
                 'id': _.place.id,
                 'link': reverse_lazy('api_place:detail', kwargs={'pk': _.place.id}),
-                'modified': _.place.modified.strftime('%Y-%m-%d %T %Z')
+                'modified': _.place.modified.strftime('%Y-%m-%d %T %Z'),
+                'title': _.place.title,
             }
             if _.image:
                 temp_place['selected_image'] = _.image.image.url
@@ -212,7 +219,7 @@ class Article(models.Model):
                     temp_place['other_images'] = [
                         image.image.url for image in _.place.placeimage_set.exclude(pk=_.image.pk)]
             if _.description:
-                temp_place['description'] = _.description
+                temp_place['article_text'] = _.description
             if _.order:
                 temp_place['order'] = _.order
             result['article_places'].append(temp_place)
@@ -236,12 +243,10 @@ class Place(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if isinstance(self.info, dict):
-            title = self.info.get('title')
+        if self.title:
+            title = "%s..." % self.title[:47] if len(self.title) > 46 else self.title
         else:
-            title = loads(self.info).get('title')
-        if title:
-            title = "%s..." % title[:47] if len(title) > 46 else title
+            title = 'No title'
         return "М(%s): %s" % (self.pk, title, )
 
     def serialize(self, username, detailed=True):
@@ -256,7 +261,10 @@ class Place(models.Model):
         result['coordinates'] = [float(self.latitude), float(self.longitude), float(self.altitude)]
         result['title'] = self.title
 
-        json_data = loads(self.info)
+        if isinstance(self.info, dict):
+            json_data = self.info
+        else:
+            json_data = loads(self.info)
         json_keys = ['subtitle', 'description', 'address', 'route', 'traffic', ]
         for key in json_keys:
             if json_data.get(key):
@@ -302,7 +310,7 @@ class PlaceArticle(models.Model):
     article = models.ForeignKey(Article, null=True, blank=True, on_delete=models.SET_NULL)
     image = models.ForeignKey(PlaceImage, null=True, blank=True, on_delete=models.SET_NULL)
     order = models.IntegerField(default=0)
-    description = models.TextField()
+    description = models.TextField(verbose_name='Текст в статье')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
