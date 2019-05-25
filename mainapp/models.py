@@ -49,6 +49,8 @@ class City(models.Model):
     locality = models.TextField()
     region = models.TextField()
     country = models.TextField()
+    bbox = JSONField()
+    radius = models.DecimalField(verbose_name='Радиус', max_digits=10, decimal_places=8, null=True, blank=True)
     latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=8, null=True, blank=True)
     longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=8, null=True, blank=True)
     altitude = models.IntegerField(verbose_name="Высота", default=0)
@@ -77,6 +79,10 @@ class City(models.Model):
         }
         if self.latitude is not None and self.longitude is not None:
             result['coordinates'] = [float(self.latitude), float(self.longitude), float(self.altitude)]
+        if self.radius is not None:
+            result['radius'] = float(self.radius)
+        if self.bbox:
+            result['bbox'] = self.bbox
         if not detailed:
             return result
         print('KWARGS:', kwargs)
