@@ -19,6 +19,8 @@ class Paginator:
 
     @property
     def pages(self):
+        if not self.count:
+            return 0
         if self.count == self.items_per_page:
             return 1
         return (self.count // self.items_per_page) + 1
@@ -49,9 +51,11 @@ class Paginator:
     @property
     def page(self):
         index = self.current_page * self.items_per_page
+        if not index:
+            return None
         if self.query:
             return self.query.order_by('id')[index - self.items_per_page:index]
         if self.item_list:
-            return self.item_list[index-self.items_per_page:index]
+            return self.item_list[index - self.items_per_page:index]
         if self.model:
             return self.model.objects.order_by('id')[index - self.items_per_page:index]

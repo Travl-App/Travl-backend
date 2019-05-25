@@ -56,21 +56,33 @@ class JsonMapListView(ListView):
         string_names.place_page_num = 'place_page_num'
         string_names.places_per_page = 'places_per_page'
 
-        place_page_num = int(self.request.GET.get(string_names.place_page_num, ['1'])[0])
-        places_per_page = int(self.request.GET.get(string_names.places_per_page, ['10'])[0])
+        place_page_num = int(self.request.GET.get(string_names.place_page_num, '1'))
+        places_per_page = int(self.request.GET.get(string_names.places_per_page, '10'))
 
         place_paginator = Paginator(current_page=place_page_num, query=places
                                     .filter(latitude__gte=bottom_border)
                                     .filter(latitude__lte=upper_border)
                                     .filter(longitude__gte=left_border)
                                     .filter(longitude__lte=right_border), items_per_page=places_per_page)
+        if not place_paginator.page:
+            return {
+                'status': 404,
+                'description': 'No data to show',
+                'context': {
+                    'position': position, 'radius': radius,
+                    string_names.place_page_num: place_page_num,
+                    string_names.places_per_page: places_per_page,
+                    'paginator_count': place_paginator.count,
+                    'paginator_pages': place_paginator.pages,
+                }
+            }
         data['places'] = {'count': place_paginator.count, }
         data['places']['data'] = [place.serialize(username, detailed=True) for place in place_paginator.page]
 
-        places_url = '%(url)s?%(place_page_num)s=%(place)s&detailed=%(detailed)s&position=%(position)s&radius=%(radius)s'
+        places_url = '%(url)s?%(page_num_str)s=%(place)s&detailed=%(detailed)s&position=%(position)s&radius=%(radius)s'
         url_data = {
             'url': reverse_lazy('api_map:list'),
-            'place_page_num': string_names.place_page_num,
+            'page_num_str': string_names.place_page_num,
             'detailed': detailed_places,
             'position': position,
             'radius': radius
