@@ -4,7 +4,8 @@ from django.http.response import HttpResponse, Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
-from mainapp.models import Place, Travler
+from mainapp.models import Travler
+from mainapp.models.place import Place
 
 
 class RestPlaceListView(ListView):

@@ -4,7 +4,8 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
-from mainapp.models import Article, Travler
+from mainapp.models import Travler
+from mainapp.models.article import Article
 from mainapp.scripts.paginator import Paginator
 
 
@@ -74,7 +75,9 @@ class JsonArticleListView(ListView):
             }
         data['count'] = article_paginator.count
         if travlzine == 'true':
-            data['articles'] = [article.serialize(username, detailed=False) for article in article_paginator.page]
+            data['articles'] = [
+                article.serialize(username, extended=True) for article in article_paginator.page
+            ]
         else:
             data['articles'] = [article.serialize(username, detailed=True) for article in article_paginator.page]
 
@@ -85,7 +88,6 @@ class JsonArticleListView(ListView):
             'per_page_str': string_names.articles_per_page,
             'articles_number': articles_per_page,
         }
-
 
         if article_paginator.has_next():
             url_data.update({

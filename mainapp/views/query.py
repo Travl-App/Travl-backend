@@ -2,7 +2,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic import ListView
 
-from mainapp.models import City, Travler
+from mainapp.models import Travler
+from mainapp.models.city import City
 from mainapp.scripts.geocode import Coords2City
 
 

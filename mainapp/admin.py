@@ -4,12 +4,15 @@ from django.contrib.admin.options import get_ul_class
 from django.contrib.admin.widgets import AutocompleteSelect
 from django.utils.translation import gettext
 
-from mainapp.models import (
-    City, Category,
-    Article, ArticleCategory,
-    Place, PlaceImage, PlaceCategory, PlaceArticle,
-    Travler)
 from mainapp.forms.place import PlaceWidgetForm
+from mainapp.models import Travler
+from mainapp.models.article import Article
+from mainapp.models.articlecategory import ArticleCategory
+from mainapp.models.category import Category
+from mainapp.models.city import City
+from mainapp.models.place import Place, PlaceImage
+from mainapp.models.placearticle import PlaceArticle
+from mainapp.models.placecategory import PlaceCategory
 
 
 class PlaceCategoryInline(admin.StackedInline):
@@ -70,8 +73,13 @@ class ArticleCategoryInline(admin.StackedInline):
 
 
 class ArticleAdminModel(admin.ModelAdmin):
+    def travlzine(self, obj):
+        return obj.is_chosen
+    travlzine.short_description = 'Travlzine'
+    travlzine.boolean = True
+
     list_display = [
-        'id', 'title', 'subtitle', 'modified'
+        'id', 'title', 'subtitle', 'travlzine', 'modified'
     ]
 
     inlines = [PlaceArticleInline, ArticleCategoryInline]

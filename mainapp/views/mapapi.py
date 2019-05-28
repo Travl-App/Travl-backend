@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
-from mainapp.models import Place, Travler
+from mainapp.models import Travler
+from mainapp.models.place import Place
 from mainapp.scripts.paginator import Paginator
 
 
