@@ -26,6 +26,11 @@ class JsonArticleListView(ListView):
 
         username = self.request.GET.get('user', 'travl')
         travlzine = self.request.GET.get('travlzine', False)
+        if travlzine == 'true':
+            travlzine = True
+        else:
+            travlzine = False
+
         try:
             assert Travler.objects.get(username=username)
         except ObjectDoesNotExist:
@@ -50,7 +55,7 @@ class JsonArticleListView(ListView):
         article_page_num = int(self.request.GET.get(string_names.article_page_num, '1'))
         articles_per_page = int(self.request.GET.get(string_names.articles_per_page, '11'))
 
-        if travlzine == 'true':
+        if travlzine:
             article_paginator = Paginator(
                 current_page=article_page_num,
                 query=articles.filter(is_chosen=True),
@@ -74,7 +79,7 @@ class JsonArticleListView(ListView):
                 }
             }
         data['count'] = article_paginator.count
-        if travlzine == 'true':
+        if travlzine:
             data['articles'] = [
                 article.serialize(username, extended=True) for article in article_paginator.page
             ]
@@ -88,6 +93,8 @@ class JsonArticleListView(ListView):
             'per_page_str': string_names.articles_per_page,
             'articles_number': articles_per_page,
         }
+        if travlzine:
+            articles_url += '&travlzine=true'
 
         if article_paginator.has_next():
             url_data.update({
@@ -99,6 +106,8 @@ class JsonArticleListView(ListView):
                 'page_num': article_paginator.prev,
             })
             data['prev'] = articles_url % url_data
+
+
 
         # if travlzine == 'true':
         #     data['articles'] = [
