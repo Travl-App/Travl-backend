@@ -3,7 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
-from mainapp.models import Category, Travler
+from mainapp.models import Travler
+from mainapp.models.category import Category
 
 
 class RestCategoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):

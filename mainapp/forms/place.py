@@ -1,7 +1,8 @@
 from django import forms
 from django_admin_json_editor import JSONEditorWidget
 
-from mainapp.models import Place
+from mainapp.models.place import Place
+
 
 # https://github.com/jdorn/json-editor#format
 PLACE_SCHEMA = {
