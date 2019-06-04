@@ -1,5 +1,5 @@
 from os import listdir, path
-from json import dumps, loads
+from json import loads
 from random import shuffle as random_shuffle, choice as random_choice
 from time import sleep
 
@@ -9,11 +9,14 @@ from django.core.management.base import BaseCommand
 from django.core.files import File
 from django.conf import settings
 
-from mainapp.models import (
-    Travler, City,
-    Article, ArticleCategory, Category,
-    Place, PlaceImage, PlaceCategory, PlaceArticle
-)
+from mainapp.models import Travler
+from mainapp.models.article import Article
+from mainapp.models.articlecategory import ArticleCategory
+from mainapp.models.category import Category
+from mainapp.models.city import City
+from mainapp.models.place import Place, PlaceImage
+from mainapp.models.placearticle import PlaceArticle
+from mainapp.models.placecategory import PlaceCategory
 from mainapp.scripts.geocode import Coords2City
 
 
@@ -59,8 +62,8 @@ class CreateObjects:
         places = []
         counter_amended = 0
         for item in raw_places:
-            item['longitude'] = float("{0:.8f}".format(float(item['longitude'])))
-            item['latitude'] = float("{0:.8f}".format(float(item['latitude'])))
+            item['longitude'] = float("{0:.7f}".format(float(item['longitude'])))
+            item['latitude'] = float("{0:.7f}".format(float(item['latitude'])))
             temp_place = Place.objects.filter(longitude=item['longitude']).filter(latitude=item['latitude'])
             if temp_place:
                 item['travler'] = temp_place.first().travler
