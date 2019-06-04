@@ -67,6 +67,8 @@ class Article(models.Model):
                 'modified': self.modified.strftime('%Y-%m-%d %T %Z'),
                 'link': reverse_lazy('api_article:detail', kwargs={'pk': self.id})
             }
+            if result.get('author'):
+                res['author'] = result['author']
             if result.get('image_cover'):
                 res['image_cover'] = result['image_cover']
             if result.get('categories'):
