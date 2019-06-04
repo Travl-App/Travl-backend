@@ -36,7 +36,7 @@ class Article(models.Model):
             result['description'] = self.description
         if self.image_cover:
             result['image_cover'] = self.image_cover.url
-        for _ in self.placearticle_set.all():
+        for _ in self.placearticle_set.all().order_by('order'):
             # TODO: move place_article serialization in PlaceArticle model
             temp_place = {
                 'id': _.place.id,
