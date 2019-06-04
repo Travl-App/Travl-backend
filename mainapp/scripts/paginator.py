@@ -54,7 +54,10 @@ class Paginator:
         if not index:
             return None
         if self.query:
-            return self.query.order_by('id')[index - self.items_per_page:index]
+            order = list(self.query.query.order_by)
+            order.append('id')
+            print(self.query.query.order_by)
+            return self.query.order_by(*order)[index - self.items_per_page:index]
         if self.item_list:
             return self.item_list[index - self.items_per_page:index]
         if self.model:
