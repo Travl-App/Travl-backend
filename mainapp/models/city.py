@@ -14,6 +14,11 @@ class City(models.Model):
     latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=7, null=True, blank=True)
     longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=7, null=True, blank=True)
     altitude = models.IntegerField(verbose_name="Высота", default=0)
+    #wikidata
+    image = models.ImageField(verbose_name='АватарГорода', upload_to='city_images', blank=True, null=True)
+    qlink = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -43,6 +48,10 @@ class City(models.Model):
             result['radius'] = float(self.radius)
         if self.bbox:
             result['bbox'] = self.bbox
+        if self.image:
+            result['image'] = self.image.url
+        if self.description:
+            result['description'] = self.description
         if not detailed:
             return result
         print('KWARGS:', kwargs)
