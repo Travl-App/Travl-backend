@@ -6,6 +6,7 @@ from mainapp.scripts.paginator import Paginator
 
 
 class City(models.Model):
+    title = models.TextField()
     locality = models.TextField()
     region = models.TextField()
     country = models.TextField()
@@ -35,7 +36,7 @@ class City(models.Model):
 
         result = {
             'id': self.id,
-            'title': ', '.join([self.locality, self.region]),
+            'title': self.title,
             'country': self.country,
             'region': self.region,
             'area': self.locality,
