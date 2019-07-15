@@ -18,7 +18,7 @@ class Coords2City:
             'access_token': settings.MAPBOX_TOKEN,
             'types': 'place,region,country',
             'language': 'ru,en',
-            'languageMode': 'strict',
+            # 'languageMode': 'strict',
         }
         r = requests_get(url, params)
         return r.json()
