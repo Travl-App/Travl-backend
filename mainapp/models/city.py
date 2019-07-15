@@ -24,7 +24,7 @@ class City(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s (%s)" % (self.locality, self.region, )
+        return "%s (%s, %s)" % (self.title, self.locality, self.region, )
 
     def serialize(self, username, detailed=True, **kwargs):
 
