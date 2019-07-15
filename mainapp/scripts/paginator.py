@@ -54,7 +54,13 @@ class Paginator:
         if not index:
             return None
         if self.query:
-            return self.query.order_by('id')[index - self.items_per_page:index]
+            try:
+                order = list(self.query.query.order_by)
+                order.append('id')
+                return self.query.order_by(*order)[index - self.items_per_page:index]
+            # Кастыль см. trello #170
+            except AttributeError:
+                return self.query.order_by('id')[index - self.items_per_page:index]
         if self.item_list:
             return self.item_list[index - self.items_per_page:index]
         if self.model:

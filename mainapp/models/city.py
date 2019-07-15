@@ -6,19 +6,25 @@ from mainapp.scripts.paginator import Paginator
 
 
 class City(models.Model):
+    title = models.TextField()
     locality = models.TextField()
     region = models.TextField()
     country = models.TextField()
     bbox = JSONField()
-    radius = models.DecimalField(verbose_name='Радиус', max_digits=10, decimal_places=8, null=True, blank=True)
-    latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=8, null=True, blank=True)
-    longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=8, null=True, blank=True)
+    radius = models.DecimalField(verbose_name='Радиус', max_digits=10, decimal_places=7, null=True, blank=True)
+    latitude = models.DecimalField(verbose_name="Широта", max_digits=10, decimal_places=7, null=True, blank=True)
+    longitude = models.DecimalField(verbose_name="Долгота", max_digits=10, decimal_places=7, null=True, blank=True)
     altitude = models.IntegerField(verbose_name="Высота", default=0)
+    #wikidata
+    image = models.ImageField(verbose_name='АватарГорода', upload_to='city_images', blank=True, null=True)
+    qlink = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s (%s)" % (self.locality, self.region, )
+        return "%s (%s, %s)" % (self.title, self.locality, self.region, )
 
     def serialize(self, username, detailed=True, **kwargs):
 
@@ -30,7 +36,7 @@ class City(models.Model):
 
         result = {
             'id': self.id,
-            'title': ', '.join([self.locality, self.region]),
+            'title': self.title,
             'country': self.country,
             'region': self.region,
             'area': self.locality,
@@ -43,6 +49,10 @@ class City(models.Model):
             result['radius'] = float(self.radius)
         if self.bbox:
             result['bbox'] = self.bbox
+        if self.image:
+            result['image'] = self.image.url
+        if self.description:
+            result['description'] = self.description
         if not detailed:
             return result
         print('KWARGS:', kwargs)
