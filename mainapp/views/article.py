@@ -58,12 +58,12 @@ class JsonArticleListView(ListView):
         if travlzine:
             article_paginator = Paginator(
                 current_page=article_page_num,
-                query=articles.filter(is_chosen=True),
+                query=articles.filter(is_chosen=True).order_by('-modified'),
                 items_per_page=articles_per_page)
         else:
             article_paginator = Paginator(
                 current_page=article_page_num,
-                query=articles,
+                query=articles.order_by('-modified'),
                 items_per_page=articles_per_page
             )
 

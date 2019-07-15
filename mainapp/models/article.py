@@ -36,7 +36,7 @@ class Article(models.Model):
             result['description'] = self.description
         if self.image_cover:
             result['image_cover'] = self.image_cover.url
-        for _ in self.placearticle_set.all():
+        for _ in self.placearticle_set.all().order_by('order'):
             # TODO: move place_article serialization in PlaceArticle model
             temp_place = {
                 'id': _.place.id,
@@ -67,6 +67,8 @@ class Article(models.Model):
                 'modified': self.modified.strftime('%Y-%m-%d %T %Z'),
                 'link': reverse_lazy('api_article:detail', kwargs={'pk': self.id})
             }
+            if result.get('author'):
+                res['author'] = result['author']
             if result.get('image_cover'):
                 res['image_cover'] = result['image_cover']
             if result.get('categories'):
