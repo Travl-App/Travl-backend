@@ -147,16 +147,44 @@ main {
   .header__navigation li a {
     color: #ffffff; }
 
+.mapboxgl-ctrl-group {
+  display: inline-block; }
+
 .main_page {
   flex: 100%;
   display: flex;
   flex-direction: column;
   align-items: center; }
 
-.display_none {
+.fader-enter {
+  opacity: 0; }
+
+.fader-enter-active {
+  opacity: 1;
+  transition: opacity 1s ease-out; }
+
+.fader-exit {
+  opacity: 1; }
+
+.fader-exit-active {
+  opacity: 0;
+  transition: opacity 1s ease-out; }
+
+.header__drop_down_block_hidden {
+  transition: 1s ease-out;
+  opacity: 0;
+  position: absolute;
+  bottom: 0px;
+  height: 0px;
+  width: 100%;
+  z-index: -1; }
+
+.header__drop_down_block_hidden .searching_holder {
   display: none; }
 
-.main_page__searching {
+.header__drop_down_block {
+  transition: 1s ease-out;
+  opacity: 1;
   background-color: #ffffff;
   padding-top: 40px;
   height: 180px;
@@ -165,11 +193,11 @@ main {
   bottom: -180px;
   z-index: 1; }
 
-.searching_holder {
+.drop_down_block_holder {
   margin: 0 auto;
   width: 380px;
-  height: 180px; }
-  .searching_holder input {
+  height: 140px; }
+  .drop_down_block_holder input {
     width: 380px;
     height: 40px;
     border: solid 1px #a5a5a5;
@@ -177,7 +205,7 @@ main {
     text-indent: 13px;
     line-height: 38px;
     font-size: 14px; }
-  .searching_holder input::placeholder {
+  .drop_down_block_holder input::placeholder {
     font-family: "Material Icons", "Montserrat", sans-serif;
     font-weight: normal;
     font-style: normal;
@@ -200,20 +228,20 @@ main {
     -moz-osx-font-smoothing: grayscale;
     /* Support for IE. */
     font-feature-settings: 'liga'; }
-  .searching_holder input:focus::placeholder {
+  .drop_down_block_holder input:focus::placeholder {
     opacity: 0; }
 
-.main_page__cities {
+.drop_down_block__names {
   margin-top: 29px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   text-transform: uppercase;
   font-weight: bold; }
-  .main_page__cities a {
+  .drop_down_block__names a {
     color: black;
     padding-bottom: 14px; }
-  .main_page__cities a:hover {
+  .drop_down_block__names a:hover {
     color: #a5a5a5; }
 
 .container {
@@ -327,6 +355,9 @@ main {
   align-items: center;
   justify-content: center;
   height: 162px; }
+
+.article__category_name {
+  margin-top: 36px; }
 
 .article__title {
   width: 780px;
