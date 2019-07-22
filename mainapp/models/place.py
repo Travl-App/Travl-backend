@@ -42,7 +42,7 @@ class Place(models.Model):
             json_data = self.info
         else:
             json_data = loads(self.info)
-        json_keys = ['subtitle', 'description', 'address', 'route', 'traffic', ]
+        json_keys = ['subtitle', 'description', 'address', 'route', 'traffic', 'www', ]
         for key in json_keys:
             if json_data.get(key):
                 result[key] = json_data.get(key)
