@@ -53,6 +53,8 @@ class City(models.Model):
             result['image'] = self.image.url
         if self.description:
             result['description'] = self.description
+        if self.qlink:
+            result['qlink'] = self.qlink
         if not detailed:
             return result
         print('KWARGS:', kwargs)
