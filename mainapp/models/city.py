@@ -118,3 +118,16 @@ class City(models.Model):
             result['articles']['prev'] = city_url % url_data
 
         return result
+
+    def info(self):
+        result = {
+            'id': self.id,
+            'title': self.title,
+        }
+        if self.image:
+            result['image'] = self.image.url
+        if self.description:
+            result['description'] = self.description
+        if self.qlink:
+            result['qlink'] = self.qlink
+        return result

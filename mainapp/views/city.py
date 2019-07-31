@@ -86,6 +86,25 @@ class RestCityDetailView(DetailView):
         return JsonResponse(context)
 
 
+class RestCityInfoView(DetailView):
+    model = City
+    query_pk_and_slug = True
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        uin = self.kwargs.get('pk')
+
+        data = {
+            'status': 200,
+        }
+        city = City.objects.get(pk=uin)
+        data['city'] = city.info()
+
+        return data
+
+    def render_to_response(self, context, **response_kwargs):
+        return JsonResponse(context)
+
+
 class RestCityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = City
 
