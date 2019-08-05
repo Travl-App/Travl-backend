@@ -55,6 +55,9 @@ class Place(models.Model):
         articles = [_.article.serialize(username, detailed=False) for _ in self.placearticle_set.all()]
         if len(articles):
             result['articles'] = articles
+        # city
+        if self.city:
+            result['city'] = self.city.serialize(username, detailed=False)
         # categories
         categories = [
             _.category.serialize(username, detailed=False) for _ in self.placecategory_set.all()
